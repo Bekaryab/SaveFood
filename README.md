@@ -73,43 +73,67 @@ Swift Package Manager	External package dependencies
 XCTest	Test target and test structure
 
 
-Architecture
-The project is organized by application layers and feature areas. The structure is intended to keep UI, presentation state, domain concepts, and data access separate as the application grows.
+
+## Architecture
+
+SaveFood follows a feature-based architecture with separate application, core, data, and domain layers.
+
+```text
 SaveFood/
 ├── App/
 │   ├── AppDependencies.swift
 │   ├── AppRouter.swift
 │   ├── AppSession.swift
 │   └── RootView.swift
+│
 ├── Core/
 │   ├── Components/
 │   ├── DesignSystem/
 │   ├── Extensions/
 │   ├── Location/
 │   └── Utilities/
+│
 ├── Data/
 │   ├── DTO/
 │   ├── Mock/
 │   └── Remote/
+│
 ├── Domain/
 │   ├── Models/
 │   └── Repositories/
-└── Features/
-    ├── Authentication/
-    │   ├── Models/
-    │   ├── Services/
-    │   ├── ViewModels/
-    │   └── Views/
-    ├── Business/
-    │   ├── Dashboard/
-    │   ├── Offers/
-    │   ├── Profile/
-    │   └── Reservations/
-    └── Customer/
-        ├── Explore/
-        ├── OfferDetails/
-        ├── Profile/
-        └── Reservations/
+│
+├── Features/
+│   ├── Authentication/
+│   │   ├── Models/
+│   │   ├── Services/
+│   │   ├── ViewModels/
+│   │   └── Views/
+│   │
+│   ├── Business/
+│   │   ├── Dashboard/
+│   │   ├── Offers/
+│   │   ├── Profile/
+│   │   └── Reservations/
+│   │
+│   └── Customer/
+│       ├── Explore/
+│       ├── OfferDetails/
+│       ├── Profile/
+│       └── Reservations/
+│
+└── SaveFoodTests/
+```
+
+### Architecture Layers
+
+- **App** — application entry point, routing, and dependency composition.
+- **Core** — reusable UI components, design system, utilities, and location services.
+- **Data** — DTOs, mock repositories, and remote data sources.
+- **Domain** — business models and repository protocols.
+- **Features** — authentication, customer, and business functionality.
+- **SaveFoodTests** — unit and application tests.
+
+Some folders and files are currently scaffolding and will be implemented as development progresses.
 
 SaveFoodTests/
 Main implementation areas
