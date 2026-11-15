@@ -1,0 +1,55 @@
+name: SaveFood
+
+options:
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    GENERATE_INFOPLIST_FILE: YES
+
+targets:
+  SaveFood:
+    type: application
+    platform: iOS
+
+    sources:
+      - path: SaveFood
+        excludes:
+          - Assets.xcassets
+          - Resources/3DModels
+
+    resources:
+      - path: SaveFood/Assets.xcassets
+      - path: SaveFood/Resources/3DModels
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: Bekarys.SaveFood
+
+  SaveFoodTests:
+    type: bundle.unit-test
+    platform: iOS
+
+    sources:
+      - path: SaveFoodTests
+
+    dependencies:
+      - target: SaveFood
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: Bekarys.SaveFoodTests
+
+schemes:
+  SaveFood:
+    build:
+      targets:
+        SaveFood: all
+    test:
+      targets:
+        - SaveFoodTests
