@@ -73,7 +73,6 @@
 		969096E230A97C0C00B86263 /* WelcomeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969096E130A97C0C00B86263 /* WelcomeContentView.swift */; };
 		969096E430A97C3400B86263 /* AuthenticationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969096E330A97C3400B86263 /* AuthenticationFormView.swift */; };
 		969096E630A97C8700B86263 /* AuthenticationFlowView..swift in Sources */ = {isa = PBXBuildFile; fileRef = 969096E530A97C8700B86263 /* AuthenticationFlowView..swift */; };
-		969096F030A98DC900B86263 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 969096EF30A98DC900B86263 /* GoogleService-Info.plist */; };
 		9690970230A998D800B86263 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9690970130A998D800B86263 /* FirebaseAuth */; };
 		9690970430A998D800B86263 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9690970330A998D800B86263 /* FirebaseCore */; };
 		9690970630A998D800B86263 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9690970530A998D800B86263 /* FirebaseFirestore */; };
@@ -81,6 +80,14 @@
 		9690970A30A9A1EA00B86263 /* PromoBannerCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9690970930A9A1EA00B86263 /* PromoBannerCarouselView.swift */; };
 		9690970C30A9A20900B86263 /* SlidingFilterBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9690970B30A9A20900B86263 /* SlidingFilterBarView.swift */; };
 		9690971930A9AF2400B86263 /* MapFilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9690971830A9AF2400B86263 /* MapFilterSheetView.swift */; };
+		969A7E4130B1C9990016C3D2 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E4030B1C9990016C3D2 /* ViewState.swift */; };
+		969A7E4330B1CAD00016C3D2 /* ImageUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E4230B1CAD00016C3D2 /* ImageUploadService.swift */; };
+		969A7E4530B1CB000016C3D2 /* RemoteProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E4430B1CB000016C3D2 /* RemoteProfileRepository.swift */; };
+		969A7E4730B1CBF10016C3D2 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 969A7E4630B1CBF10016C3D2 /* Secrets.xcconfig */; };
+		969A7E4930B1DE280016C3D2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 969A7E4830B1DE280016C3D2 /* GoogleService-Info.plist */; };
+		969A7E4B30B1E27A0016C3D2 /* RemoteCachedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E4A30B1E27A0016C3D2 /* RemoteCachedImageView.swift */; };
+		969A7E4F30B1E2B60016C3D2 /* InAppCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E4E30B1E2B60016C3D2 /* InAppCameraView.swift */; };
+		969A7E5130B1E3130016C3D2 /* QuickCreateOfferSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A7E5030B1E3130016C3D2 /* QuickCreateOfferSheetView.swift */; };
 		9793D9F31412164C13B07649 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B26F1BA2836F565C090A4A /* AuthRepository.swift */; };
 		99D6F5BC0C34C4DEC55D6B27 /* RemoteOfferRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BAFB5A192E7192ECD1A690 /* RemoteOfferRepository.swift */; };
 		9C7130AA05497B244EF973C4 /* AppSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67706BA90950425482CDAA /* AppSpacing.swift */; };
@@ -187,12 +194,19 @@
 		969096E130A97C0C00B86263 /* WelcomeContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeContentView.swift; sourceTree = "<group>"; };
 		969096E330A97C3400B86263 /* AuthenticationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFormView.swift; sourceTree = "<group>"; };
 		969096E530A97C8700B86263 /* AuthenticationFlowView..swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFlowView..swift; sourceTree = "<group>"; };
-		969096EF30A98DC900B86263 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		969096F830A9936A00B86263 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9690970730A9A1AD00B86263 /* ExploreModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreModels.swift; sourceTree = "<group>"; };
 		9690970930A9A1EA00B86263 /* PromoBannerCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoBannerCarouselView.swift; sourceTree = "<group>"; };
 		9690970B30A9A20900B86263 /* SlidingFilterBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingFilterBarView.swift; sourceTree = "<group>"; };
 		9690971830A9AF2400B86263 /* MapFilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFilterSheetView.swift; sourceTree = "<group>"; };
+		969A7E4030B1C9990016C3D2 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
+		969A7E4230B1CAD00016C3D2 /* ImageUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploadService.swift; sourceTree = "<group>"; };
+		969A7E4430B1CB000016C3D2 /* RemoteProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteProfileRepository.swift; sourceTree = "<group>"; };
+		969A7E4630B1CBF10016C3D2 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		969A7E4830B1DE280016C3D2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		969A7E4A30B1E27A0016C3D2 /* RemoteCachedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteCachedImageView.swift; sourceTree = "<group>"; };
+		969A7E4E30B1E2B60016C3D2 /* InAppCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCameraView.swift; sourceTree = "<group>"; };
+		969A7E5030B1E3130016C3D2 /* QuickCreateOfferSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCreateOfferSheetView.swift; sourceTree = "<group>"; };
 		993F45AF5112702DC6840371 /* SaveFood.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaveFood.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D7A34579C717A56B14F67C3 /* OfferDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetailsViewModel.swift; sourceTree = "<group>"; };
 		9E5F64FD13CFFD161BB1B729 /* BusinessProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessProfileView.swift; sourceTree = "<group>"; };
@@ -347,6 +361,8 @@
 				36C5E3717822C4B8E53B24EF /* LoadingView.swift */,
 				C7B984A776A6AD4849C67901 /* PrimaryButton.swift */,
 				6C7125C7068AFC895CAB3440 /* SecondaryButton.swift */,
+				969A7E4030B1C9990016C3D2 /* ViewState.swift */,
+				969A7E4A30B1E27A0016C3D2 /* RemoteCachedImageView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -358,6 +374,8 @@
 				D0C0CEE1CBF384CFAB0B6B09 /* EditOfferView.swift */,
 				4185C1CE40412DC5D3AC0C97 /* MyOffersView.swift */,
 				1D3C8FC9B47BFEDA9090EF46 /* OfferManagementViewModel.swift */,
+				969A7E4E30B1E2B60016C3D2 /* InAppCameraView.swift */,
+				969A7E5030B1E3130016C3D2 /* QuickCreateOfferSheetView.swift */,
 			);
 			path = Offers;
 			sourceTree = "<group>";
@@ -387,10 +405,11 @@
 		3F9746724D3FC4235C3B97EA = {
 			isa = PBXGroup;
 			children = (
+				969A7E4630B1CBF10016C3D2 /* Secrets.xcconfig */,
 				563E15C64A53003EC91894C9 /* SaveFood */,
 				0D28BF19F41CEF7FC92963E0 /* SaveFoodTests */,
-				969096EF30A98DC900B86263 /* GoogleService-Info.plist */,
 				9690970030A998D800B86263 /* Frameworks */,
+				969A7E4830B1DE280016C3D2 /* GoogleService-Info.plist */,
 				0C4F0DFF84FFC410CA41A90C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -599,6 +618,8 @@
 				811F044B61110C305FDFE0A0 /* RemoteAuthRepository.swift */,
 				B7BAFB5A192E7192ECD1A690 /* RemoteOfferRepository.swift */,
 				3A5689955A60F8770B9AC731 /* RemoteReservationRepository.swift */,
+				969A7E4230B1CAD00016C3D2 /* ImageUploadService.swift */,
+				969A7E4430B1CB000016C3D2 /* RemoteProfileRepository.swift */,
 			);
 			path = Remote;
 			sourceTree = "<group>";
@@ -735,12 +756,13 @@
 				969096C530A8954000B86263 /* Bread.usdz in Resources */,
 				969096C630A8954000B86263 /* Dairy_Milk_Cadbury_Milk_Chocolate_Bar.usdz in Resources */,
 				969096C730A8954000B86263 /* Carrot_Cake.usdz in Resources */,
+				969A7E4930B1DE280016C3D2 /* GoogleService-Info.plist in Resources */,
 				969096C830A8954000B86263 /* Coca_Cola_Bottle.usdz in Resources */,
+				969A7E4730B1CBF10016C3D2 /* Secrets.xcconfig in Resources */,
 				969096C930A8954000B86263 /* Egg.usdz in Resources */,
 				969096CC30A8DD3200B86263 /* Back_Yard_Burgers_-_Classic_Burger 2.usdz in Resources */,
 				969096CA30A8954000B86263 /* Pineapple.usdz in Resources */,
 				969096BA30A7A4AE00B86263 /* Apple.usdz in Resources */,
-				969096F030A98DC900B86263 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,7 +774,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				67DDE2AC19C0A47122B426E7 /* APIClient.swift in Sources */,
+				969A7E5130B1E3130016C3D2 /* QuickCreateOfferSheetView.swift in Sources */,
 				2A9C477FCFF295D40BAF50BC /* AppColors.swift in Sources */,
+				969A7E4130B1C9990016C3D2 /* ViewState.swift in Sources */,
 				969096DC30A8FB1E00B86263 /* RegisterTextField.swift in Sources */,
 				8E2B61AD102B3C3CA790E581 /* AppDependencies.swift in Sources */,
 				BACFE1B2CF6C1C5AD54F60F6 /* AppFonts.swift in Sources */,
@@ -760,6 +784,7 @@
 				31AAB8C3CD49F1B0C3C4FBD3 /* AppSession.swift in Sources */,
 				9C7130AA05497B244EF973C4 /* AppSpacing.swift in Sources */,
 				E0D5CFD49E37F6838DE9DC9B /* AppTheme.swift in Sources */,
+				969A7E4F30B1E2B60016C3D2 /* InAppCameraView.swift in Sources */,
 				668CCA973D087DB55FF7DA27 /* AuthDTO.swift in Sources */,
 				9793D9F31412164C13B07649 /* AuthRepository.swift in Sources */,
 				5B79CC8AEDA6D8058605D183 /* BusinessDashboardView.swift in Sources */,
@@ -799,6 +824,7 @@
 				CBA020BCDDCD331D3654B371 /* MyReservationsView.swift in Sources */,
 				969096E430A97C3400B86263 /* AuthenticationFormView.swift in Sources */,
 				DB114096F329B60C46B5D0B3 /* OfferCardView.swift in Sources */,
+				969A7E4530B1CB000016C3D2 /* RemoteProfileRepository.swift in Sources */,
 				703B5D34A7EF4A9EB15528AB /* OfferDTO.swift in Sources */,
 				F9687335596384E765D268DF /* OfferDetailsView.swift in Sources */,
 				CFD2F308B0AFB85D3C4CCD3D /* OfferDetailsViewModel.swift in Sources */,
@@ -812,6 +838,7 @@
 				70BEC54194BCA738F02111A1 /* ProfileRepository.swift in Sources */,
 				D47D7F37A68A0BDDC22B2E60 /* RegisterView.swift in Sources */,
 				559CFAE5DCCB60F44A5DB678 /* RegisterViewModel.swift in Sources */,
+				969A7E4B30B1E27A0016C3D2 /* RemoteCachedImageView.swift in Sources */,
 				C4A6DEE9C88C424416F78D6E /* RemoteAuthRepository.swift in Sources */,
 				99D6F5BC0C34C4DEC55D6B27 /* RemoteOfferRepository.swift in Sources */,
 				62F0BF8F04BBFE6ED4518815 /* RemoteReservationRepository.swift in Sources */,
@@ -822,6 +849,7 @@
 				6754A36E6BC3AC389C6B4E0A /* ReservationsViewModel.swift in Sources */,
 				07CD36CB67C9B479F139FBFA /* RoleSelectorView.swift in Sources */,
 				0948479B37AB64C0B7A9D8FD /* RootView.swift in Sources */,
+				969A7E4330B1CAD00016C3D2 /* ImageUploadService.swift in Sources */,
 				AC1FE88CFDC19EB41493FD5E /* SampleData.swift in Sources */,
 				9690971930A9AF2400B86263 /* MapFilterSheetView.swift in Sources */,
 				7ED6D6AF7398DB14BD982415 /* SaveFoodApp.swift in Sources */,
@@ -861,6 +889,7 @@
 /* Begin XCBuildConfiguration section */
 		2D4B274D0B1C36BA166DBEA9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 969A7E4630B1CBF10016C3D2 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -869,6 +898,7 @@
 				DEVELOPMENT_TEAM = N2YUVR5697;
 				INFOPLIST_FILE = SaveFood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SaveFood;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Камера используется для съёмки фотографий продуктов в SaveFood";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
@@ -886,6 +916,7 @@
 		};
 		665131284819CEA38B78EEE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 969A7E4630B1CBF10016C3D2 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -894,6 +925,7 @@
 				DEVELOPMENT_TEAM = N2YUVR5697;
 				INFOPLIST_FILE = SaveFood/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SaveFood;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Камера используется для съёмки фотографий продуктов в SaveFood";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;

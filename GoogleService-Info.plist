@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>188143527564-a6i9nqiiihb9ahnir5jl94c3tm2mbjv5.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.188143527564-a6i9nqiiihb9ahnir5jl94c3tm2mbjv5</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCl9VeTaCQWtmfiVrlMW_VxfkIEIj55meg</string>
+	<string>AIzaSyCl3FRTTB6eusAfwNrkEsK7gW9YOZ8V6dI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>188143527564</string>
+	<string>892394129260</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>Bekarys.SaveFood</string>
 	<key>PROJECT_ID</key>
-	<string>savefood-42b66</string>
+	<string>savefood-dev-cf1ca</string>
 	<key>STORAGE_BUCKET</key>
-	<string>savefood-42b66.firebasestorage.app</string>
+	<string>savefood-dev-cf1ca.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:188143527564:ios:e123b41cdcacc19b017da9</string>
+	<string>1:892394129260:ios:7a0db52341724cf696d549</string>
 </dict>
 </plist>

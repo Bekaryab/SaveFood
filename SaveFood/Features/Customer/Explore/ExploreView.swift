@@ -1,50 +1,54 @@
 import SwiftUI
 import UIKit
+
 struct ExploreView: View {
+
     var userName: String = "Пользователь"
     var userRole: AuthAccountRole = .customer
     var onSignOut: (() -> Void)? = nil
-    @State private var viewModel = ExploreViewModel()
+
+    @State private var viewModel: ExploreViewModel
     @State private var isSearchExpanded: Bool = false
     @FocusState private var isSearchFieldFocused: Bool
     @Namespace private var topHeaderNamespace
+
     private let primaryGreen = Color(red: 0.08, green: 0.30, blue: 0.15)
     private let creamBackground = Color(red: 0.965, green: 0.969, blue: 0.937)
     private let softSageCard = Color(red: 0.905, green: 0.932, blue: 0.880)
+
     init(
         userName: String = "Пользователь",
         userRole: AuthAccountRole = .customer,
+        offerRepository: OfferRepository = RemoteOfferRepository(),
         onSignOut: (() -> Void)? = nil
     ) {
         self.userName = userName
         self.userRole = userRole
         self.onSignOut = onSignOut
+        _viewModel = State(initialValue: ExploreViewModel(offerRepository: offerRepository))
         Self.configureNativeTabBarBlur()
     }
+
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
-            // 1. ГЛАВНАЯ
             exploreMainTab
                 .tabItem {
                     Label("Главная", systemImage: "house.fill")
                 }
                 .tag(HomeNativeTab.explore)
 
-            // 2. КАРТА
             exploreMainTab
                 .tabItem {
                     Label("Карта", systemImage: "mappin.and.ellipse")
                 }
                 .tag(HomeNativeTab.map)
 
-            // 3. ИЗБРАННОЕ
             favoritesNavigationTab
                 .tabItem {
                     Label("Избранное", systemImage: "heart.fill")
                 }
                 .tag(HomeNativeTab.favorites)
 
-            // 4. КОРЗИНА
             cartNavigationTab
                 .tabItem {
                     Label("Корзина", systemImage: "cart.fill")
@@ -53,7 +57,10 @@ struct ExploreView: View {
                 .tag(HomeNativeTab.cart)
         }
         .tint(primaryGreen)
-        // MARK: - 1.  Детали товара (OfferDetailsView) Sheet беті ғо
+        // Нақты уақыттағы тауарлар тыңдаушысын іске қосамыз
+        .task {
+            await viewModel.startObservingOffers()
+        }
         .sheet(item: $viewModel.selectedOfferForDetails) { selectedOffer in
             OfferDetailsView(
                 offer: selectedOffer,
@@ -72,7 +79,6 @@ struct ExploreView: View {
             .presentationDragIndicator(.hidden)
             .presentationBackground(creamBackground)
         }
-        // MARK: - 2. "Карта" н Карта Фильтрі Sheet бет
         .onChange(of: viewModel.selectedTab) { _, newTab in
             if newTab == .map {
                 if let currentCat = viewModel.selectedCategory {
@@ -117,7 +123,7 @@ struct ExploreView: View {
         }
     }
 
-    // MARK: - Главная вкладка ғо
+    // MARK: - Главная вкладка
     private var exploreMainTab: some View {
         ZStack(alignment: .top) {
             creamBackground
@@ -125,6 +131,7 @@ struct ExploreView: View {
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 18) {
+
                     PromoBannerCarouselView(
                         banners: viewModel.promoBanners,
                         isAutoScrollStopped: $viewModel.isBannerAutoScrollStopped,
@@ -134,6 +141,7 @@ struct ExploreView: View {
                         }
                     )
                     .padding(.top, 8)
+
                     HStack(alignment: .firstTextBaseline) {
                         Text(viewModel.selectedCategory ?? "Выгодные предложения")
                             .font(.system(size: 22, weight: .bold, design: .rounded))
@@ -147,35 +155,13 @@ struct ExploreView: View {
                     }
                     .padding(.horizontal, 20)
 
-                   
-                    if viewModel.filteredProducts.isEmpty {
-                        emptySearchState
-                    } else {
-                        LazyVGrid(
-                            columns: [
-                                GridItem(.flexible(), spacing: 14),
-                                GridItem(.flexible(), spacing: 14)
-                            ],
-                            spacing: 16
-                        ) {
-                            ForEach(viewModel.filteredProducts) { offer in
-                                OfferCardView(
-                                    offer: offer,
-                                    onSelectOffer: {
-                                        viewModel.selectedOfferForDetails = offer
-                                    },
-                                    onToggleFavorite: {
-                                        viewModel.toggleFavorite(for: offer.id)
-                                    }
-                                )
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .animation(.spring(response: 0.36, dampingFraction: 0.84), value: viewModel.selectedCategory)
-                    }
+                    offersGridSection
 
                     Spacer(minLength: 28)
                 }
+            }
+            .refreshable {
+                await viewModel.refreshOffers()
             }
             .scrollDismissesKeyboard(.interactively)
             .safeAreaInset(edge: .top, spacing: 0) {
@@ -189,7 +175,76 @@ struct ExploreView: View {
         }
     }
 
-    // MARK: - Blur Header
+    @ViewBuilder
+    private var offersGridSection: some View {
+        switch viewModel.offersState {
+        case .idle, .loading where viewModel.products.isEmpty:
+            VStack(spacing: 12) {
+                ProgressView()
+                    .tint(primaryGreen)
+                Text("Загружаем свежие предложения...")
+                    .font(.system(size: 14.5, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 48)
+
+        case .error(let message) where viewModel.products.isEmpty:
+            VStack(spacing: 12) {
+                Image(systemName: "wifi.exclamationmark")
+                    .font(.system(size: 38))
+                    .foregroundStyle(.red.opacity(0.7))
+
+                Text(message)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(primaryGreen)
+                    .padding(.horizontal, 24)
+
+                Button {
+                    Task { await viewModel.refreshOffers() }
+                } label: {
+                    Text("Обновить")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(primaryGreen))
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 40)
+
+        default:
+            if viewModel.filteredProducts.isEmpty {
+                emptySearchState
+            } else {
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: 14),
+                        GridItem(.flexible(), spacing: 14)
+                    ],
+                    spacing: 16
+                ) {
+                    ForEach(viewModel.filteredProducts) { offer in
+                        OfferCardView(
+                            offer: offer,
+                            onSelectOffer: {
+                                viewModel.selectedOfferForDetails = offer
+                            },
+                            onToggleFavorite: {
+                                viewModel.toggleFavorite(for: offer.id)
+                            }
+                        )
+                    }
+                }
+                .padding(.horizontal, 20)
+                .animation(.spring(response: 0.36, dampingFraction: 0.84), value: viewModel.selectedCategory)
+            }
+        }
+    }
+
+    // MARK: - Жоғарғы Blur Header
     private var customBlurHeader: some View {
         VStack(spacing: 10) {
             ZStack {
@@ -366,7 +421,7 @@ struct ExploreView: View {
         )
     }
 
-    // MARK: - Кастом
+    // MARK: - Кастомды Қала таңдау терезесі
     private var customCityPickerOverlay: some View {
         ZStack(alignment: .topLeading) {
             Color.black.opacity(0.22)
@@ -470,19 +525,25 @@ struct ExploreView: View {
                 .font(.system(size: 40))
                 .foregroundStyle(primaryGreen.opacity(0.55))
 
-            Text("По вашему запросу ничего не найдено")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(primaryGreen)
+            Text(
+                viewModel.products.isEmpty
+                    ? "Пока нет активных предложений"
+                    : "По вашему запросу ничего не найдено"
+            )
+            .font(.system(size: 17, weight: .semibold, design: .rounded))
+            .foregroundStyle(primaryGreen)
 
-            Button {
-                viewModel.clearFilters()
-            } label: {
-                Text("Сбросить фильтры")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 10)
-                    .background(Capsule().fill(primaryGreen))
+            if !viewModel.products.isEmpty {
+                Button {
+                    viewModel.clearFilters()
+                } label: {
+                    Text("Сбросить фильтры")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(primaryGreen))
+                }
             }
         }
         .frame(maxWidth: .infinity)
@@ -539,6 +600,7 @@ struct ExploreView: View {
         }
     }
 
+    // MARK: - КОРЗИНА
     private var cartNavigationTab: some View {
         NavigationStack {
             ZStack {
@@ -559,62 +621,259 @@ struct ExploreView: View {
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
                             .padding(.horizontal, 36)
+
+                        Button {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                                viewModel.selectedTab = .explore
+                            }
+                        } label: {
+                            Text("Перейти к покупкам")
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 22)
+                                .frame(height: 48)
+                                .background(Capsule().fill(primaryGreen))
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 6)
                     }
                 } else {
-                    ScrollView {
-                        VStack(spacing: 12) {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "hand.draw.fill")
+                                .font(.system(size: 12, weight: .semibold))
+                            Text("Проведите по карточке вправо или влево, чтобы удалить")
+                                .font(.system(size: 12.5, weight: .medium, design: .rounded))
+                            Spacer()
+                        }
+                        .foregroundStyle(Color(red: 0.40, green: 0.47, blue: 0.41))
+                        .padding(.horizontal, 20)
+                        .padding(.top, 6)
+                        .padding(.bottom, 4)
+
+                        List {
                             ForEach(viewModel.cartItems) { item in
-                                HStack(spacing: 14) {
-                                    SmartCachedProductImage(
-                                        localImageName: item.offer.localImageName,
-                                        imageURL: item.offer.imageURL,
-                                        fallbackSymbol: item.offer.fallbackSymbol,
-                                        accentColor: item.offer.accentColor
-                                    )
-                                    .frame(width: 72, height: 72)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(item.offer.venueName)
-                                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                                            .foregroundStyle(.secondary)
-
-                                        Text(item.offer.title)
-                                            .font(.system(size: 17, weight: .bold, design: .rounded))
-                                            .foregroundStyle(primaryGreen)
-
-                                        Text("\(item.quantity) шт × \(item.offer.currentPrice)")
-                                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                                            .foregroundStyle(primaryGreen)
+                                CartItemRowView(
+                                    item: item,
+                                    primaryGreen: primaryGreen,
+                                    formattedSubtotal: viewModel.formatPrice(item.offer.priceValue * item.quantity),
+                                    onIncrement: {
+                                        viewModel.incrementCartItem(id: item.id)
+                                    },
+                                    onDecrement: {
+                                        viewModel.decrementCartItem(id: item.id)
+                                    },
+                                    onTap: {
+                                        viewModel.selectedOfferForDetails = item.offer
                                     }
-                                    Spacer()
-                                    Text("\(item.offer.priceValue * item.quantity) ₸")
-                                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                                        .foregroundStyle(primaryGreen)
-                                }
-                                .padding(14)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                        .fill(Color(red: 0.938, green: 0.953, blue: 0.910))
                                 )
+                                .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Color.clear)
+                                .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.removeFromCart(id: item.id)
+                                    } label: {
+                                        Label("Удалить", systemImage: "trash.fill")
+                                    }
+                                    .tint(.red)
+                                }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.removeFromCart(id: item.id)
+                                    } label: {
+                                        Label("Удалить", systemImage: "trash.fill")
+                                    }
+                                    .tint(.red)
+                                }
                             }
                         }
-                        .padding(20)
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+
+                        VStack(spacing: 14) {
+                            HStack {
+                                Text("Товаров в корзине (\(viewModel.totalCartCount) шт)")
+                                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                                    .foregroundStyle(Color(red: 0.36, green: 0.43, blue: 0.37))
+
+                                Spacer()
+
+                                Text(viewModel.formattedTotalCartPrice)
+                                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                                    .foregroundStyle(primaryGreen)
+                                    .contentTransition(.numericText())
+                            }
+
+                            Button {
+                                viewModel.clearCart()
+                            } label: {
+                                HStack {
+                                    Text("Оформить заказ")
+                                        .font(.system(size: 18, weight: .bold, design: .rounded))
+
+                                    Spacer()
+
+                                    Text(viewModel.formattedTotalCartPrice)
+                                        .font(.system(size: 18, weight: .bold, design: .rounded))
+
+                                    Image(systemName: "arrow.right")
+                                        .font(.system(size: 15, weight: .bold))
+                                }
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 24)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 56)
+                                .background(
+                                    Capsule()
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [
+                                                    Color(red: 0.11, green: 0.35, blue: 0.18),
+                                                    Color(red: 0.07, green: 0.27, blue: 0.13)
+                                                ],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                )
+                                .shadow(color: primaryGreen.opacity(0.22), radius: 10, x: 0, y: 4)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 14)
+                        .padding(.bottom, 16)
+                        .background(
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: 28,
+                                bottomLeadingRadius: 0,
+                                bottomTrailingRadius: 0,
+                                topTrailingRadius: 28,
+                                style: .continuous
+                            )
+                            .fill(Color(red: 0.976, green: 0.980, blue: 0.957))
+                            .shadow(color: Color.black.opacity(0.06), radius: 14, x: 0, y: -4)
+                        )
                     }
                 }
             }
             .navigationTitle("Корзина")
+            .toolbar {
+                if !viewModel.cartItems.isEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(role: .destructive) {
+                            viewModel.clearCart()
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            }
         }
     }
+
     private static func configureNativeTabBarBlur() {
         let tabAppearance = UITabBarAppearance()
         tabAppearance.configureWithDefaultBackground()
         tabAppearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
         tabAppearance.backgroundColor = UIColor(red: 0.976, green: 0.980, blue: 0.957, alpha: 0.72)
+
         UITabBar.appearance().standardAppearance = tabAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
     }
 }
+
+private struct CartItemRowView: View {
+
+    let item: CartOrderItem
+    let primaryGreen: Color
+    let formattedSubtotal: String
+    var onIncrement: () -> Void
+    var onDecrement: () -> Void
+    var onTap: () -> Void
+
+    var body: some View {
+        HStack(spacing: 14) {
+            SmartCachedProductImage(
+                localImageName: item.offer.localImageName,
+                imageURL: item.offer.imageURL,
+                fallbackSymbol: item.offer.fallbackSymbol,
+                accentColor: item.offer.accentColor
+            )
+            .frame(width: 78, height: 78)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .onTapGesture(perform: onTap)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.offer.venueName)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
+                Text(item.offer.title)
+                    .font(.system(size: 16.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(primaryGreen)
+                    .lineLimit(1)
+
+                Text(formattedSubtotal)
+                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                    .foregroundStyle(primaryGreen)
+                    .contentTransition(.numericText())
+                    .padding(.top, 2)
+            }
+            .onTapGesture(perform: onTap)
+
+            Spacer(minLength: 4)
+
+            HStack(spacing: 10) {
+                Button(action: onDecrement) {
+                    Image(systemName: item.quantity == 1 ? "trash" : "minus")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(item.quantity == 1 ? Color.red : primaryGreen)
+                        .frame(width: 30, height: 30)
+                        .background(
+                            Circle()
+                                .fill(Color(red: 0.885, green: 0.906, blue: 0.859))
+                        )
+                }
+                .buttonStyle(.plain)
+
+                Text("\(item.quantity)")
+                    .font(.system(size: 15.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(primaryGreen)
+                    .frame(minWidth: 18)
+                    .contentTransition(.numericText())
+
+                Button(action: onIncrement) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(primaryGreen)
+                        .frame(width: 30, height: 30)
+                        .background(
+                            Circle()
+                                .fill(Color(red: 0.885, green: 0.906, blue: 0.859))
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .fill(Color(red: 0.918, green: 0.937, blue: 0.890))
+            )
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(Color(red: 0.938, green: 0.953, blue: 0.910))
+        )
+    }
+}
+
 #Preview {
     ExploreView()
 }

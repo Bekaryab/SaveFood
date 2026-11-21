@@ -1,25 +1,35 @@
 import SwiftUI
+import UIKit
 import Observation
+
 @Observable
 @MainActor
 final class ExploreViewModel {
+
     var selectedTab: HomeNativeTab = .explore
     var searchText: String = ""
     var selectedCategory: String? = nil
     var showProfileMenu: Bool = false
-    // Таңдалған тауардың толық бетін  ашу үшін    (Sheet)
+
+    // Деректерді жүктеу күйі
+    var offersState: ViewState = .idle
+
+    // Таңдалған тауардың толық бетін (Sheet) ашу үшін
     var selectedOfferForDetails: HomeProductOffer? = nil
-    // тауарлар список
+
+    // Себеттегі тауарлар тізімі
     var cartItems: [CartOrderItem] = []
+
     // Карта Фильтрі Sheet күйлері
     var isMapFilterSheetPresented: Bool = false
     var mapDisplayMode: MapDisplayMode = .map
     var selectedDistanceKm: Int = 1
-    var mapSelectedCategory: String = "Овощи"
-    var minDiscountPercent: Double = 20
+    var mapSelectedCategory: String = "Все"
+    var minDiscountPercent: Double = 0
     var onlyAvailableOffers: Bool = true
     var isShowingFullMapResults: Bool = false
-    //  қала таңдау
+
+    // Кастомды қала таңдау терезесінің күйі
     var selectedCity: String = "Алматы"
     var isCityPickerPresented: Bool = false
     let availableCities: [(name: String, subtitle: String)] = [
@@ -30,22 +40,19 @@ final class ExploreViewModel {
         ("Ақтөбе", "25+ заведений рядом"),
         ("Атырау", "20+ заведений рядом")
     ]
+
     var isBannerAutoScrollStopped: Bool = false
     var selectedBannerID: UUID? = nil
-    let allCategories: [String] = [
-        "Фрукты",
-        "Овощи",
-        "Выпечка",
-        "Молочные",
-        "Готовая еда",
-        "Десерты"
-    ]
+
+    let allCategories: [String] = FoodOffer.standardCategories
+
     var visibleCategories: [String] {
         if let selectedCategory {
             return [selectedCategory]
         }
         return allCategories
     }
+
     let promoBanners: [ExplorePromoBanner] = [
         ExplorePromoBanner(
             badge: "РЯДОМ С ВАМИ",
@@ -104,137 +111,67 @@ final class ExploreViewModel {
             cartBadgeIcon: "cart.fill"
         )
     ]
-    var products: [HomeProductOffer] = [
-        HomeProductOffer(
-            title: "Томаты Черри",
-            venueName: "Green Market",
-            category: "Овощи",
-            discountPercent: 35,
-            priceValue: 640,
-            currentPrice: "640 ₸",
-            oldPrice: "990 ₸",
-            producedDate: "28 янв",
-            expiryDate: "31 янв",
-            reason: "излишки",
-            descriptionText: "Свежие, отборные томаты. Отлично подойдут для салатов и закусок.",
-            localImageName: "offer_tomato",
-            imageURL: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.86, green: 0.24, blue: 0.18)
-        ),
-        HomeProductOffer(
-            title: "Круассан",
-            venueName: "Paul Bakery",
-            category: "Выпечка",
-            discountPercent: 40,
-            priceValue: 490,
-            currentPrice: "490 ₸",
-            oldPrice: "820 ₸",
-            producedDate: "29 янв",
-            expiryDate: "30 янв",
-            reason: "излишки",
-            descriptionText: "Свежий французский круассан на сливочном масле с хрустящей золотистой корочкой.",
-            localImageName: "offer_croissant",
-            imageURL: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.85, green: 0.58, blue: 0.24)
-        ),
-        HomeProductOffer(
-            title: "Клубника",
-            venueName: "Green Market",
-            category: "Фрукты",
-            discountPercent: 35,
-            priceValue: 1290,
-            currentPrice: "1 290 ₸",
-            oldPrice: "1 990 ₸",
-            producedDate: "28 янв",
-            expiryDate: "31 янв",
-            reason: "излишки",
-            descriptionText: "Сладкая и ароматная тепличная клубника. Идеальна для десертов, смузи и завтраков.",
-            localImageName: "offer_strawberry",
-            imageURL: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.88, green: 0.18, blue: 0.24)
-        ),
-        HomeProductOffer(
-            title: "Авокадо Хасс (2 шт)",
-            venueName: "Eco Lavka",
-            category: "Овощи",
-            discountPercent: 40,
-            priceValue: 890,
-            currentPrice: "890 ₸",
-            oldPrice: "1 490 ₸",
-            producedDate: "27 янв",
-            expiryDate: "31 янв",
-            reason: "спелые",
-            descriptionText: "Мягкие, полностью созревшие авокадо сорта Хасс. Готовы к употреблению прямо сейчас.",
-            localImageName: "offer_avocado",
-            imageURL: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.26, green: 0.58, blue: 0.24)
-        ),
-        HomeProductOffer(
-            title: "Фермерское молоко",
-            venueName: "Молочная Ферма",
-            category: "Молочные",
-            discountPercent: 30,
-            priceValue: 520,
-            currentPrice: "520 ₸",
-            oldPrice: "750 ₸",
-            producedDate: "28 янв",
-            expiryDate: "31 янв",
-            reason: "срок",
-            descriptionText: "Натуральное пастеризованное фермерское молоко 3.2% жирности без добавок.",
-            localImageName: "offer_milk",
-            imageURL: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.35, green: 0.62, blue: 0.82)
-        ),
-        HomeProductOffer(
-            title: "Ремесленный хлеб",
-            venueName: "Bread & Butter",
-            category: "Выпечка",
-            discountPercent: 45,
-            priceValue: 390,
-            currentPrice: "390 ₸",
-            oldPrice: "710 ₸",
-            producedDate: "29 янв",
-            expiryDate: "31 янв",
-            reason: "излишки",
-            descriptionText: "Ароматный подовый хлеб на натуральной закваске с хрустящей корочкой.",
-            localImageName: "offer_bread",
-            imageURL: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.76, green: 0.52, blue: 0.28)
-        ),
-        HomeProductOffer(
-            title: "Боул с лососем",
-            venueName: "Healthy Kitchen",
-            category: "Готовая еда",
-            discountPercent: 50,
-            priceValue: 1450,
-            currentPrice: "1 450 ₸",
-            oldPrice: "2 900 ₸",
-            producedDate: "29 янв",
-            expiryDate: "30 янв",
-            reason: "излишки",
-            descriptionText: "Сбалансированный боул со слабосоленым лососем, рисом, авокадо, эдамаме и кунжутным соусом.",
-            localImageName: "offer_bowl",
-            imageURL: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.90, green: 0.45, blue: 0.28)
-        ),
-        HomeProductOffer(
-            title: "Чизкейк Сан-Себастьян",
-            venueName: "Sweet Studio",
-            category: "Десерты",
-            discountPercent: 35,
-            priceValue: 950,
-            currentPrice: "950 ₸",
-            oldPrice: "1 490 ₸",
-            producedDate: "28 янв",
-            expiryDate: "31 янв",
-            reason: "излишки",
-            descriptionText: "Нежный кремовый баскский чизкейк с карамелизированной корочкой.",
-            localImageName: "offer_cheesecake",
-            imageURL: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=900&q=85",
-            accentColor: Color(red: 0.82, green: 0.48, blue: 0.30)
-        )
-    ]
-    init(offerRepository: Any? = nil) {}
+
+    // Нақты уақытта сатушылардан келетін тауарлар
+    var products: [HomeProductOffer] = []
+
+    @ObservationIgnored private let offerRepository: OfferRepository
+    @ObservationIgnored private let favoritesStorageKey = "savefood.customer.favoriteOfferIDs"
+    private var favoriteOfferIDs: Set<String>
+
+    init(offerRepository: OfferRepository = RemoteOfferRepository()) {
+        self.offerRepository = offerRepository
+        let saved = UserDefaults.standard.stringArray(forKey: "savefood.customer.favoriteOfferIDs") ?? []
+        self.favoriteOfferIDs = Set(saved)
+    }
+
+    // MARK: - Нақты уақыттағы тыңдау (Сатушы тауар қосқанда сатып алушыда бірден шығады)
+    func startObservingOffers() async {
+        if products.isEmpty {
+            offersState = .loading
+        }
+
+        do {
+            for try await remoteOffers in offerRepository.observeActiveOffers() {
+                applyRemoteOffers(remoteOffers)
+            }
+        } catch {
+            if products.isEmpty {
+                offersState = .error("Не удалось загрузить предложения: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func refreshOffers() async {
+        do {
+            let remoteOffers = try await offerRepository.fetchActiveOffers()
+            applyRemoteOffers(remoteOffers)
+        } catch {
+            if products.isEmpty {
+                offersState = .error("Не удалось обновить предложения: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func applyRemoteOffers(_ remoteOffers: [FoodOffer]) {
+        let mapped = remoteOffers.map { offer in
+            HomeProductOffer(
+                from: offer,
+                isFavorite: favoriteOfferIDs.contains(offer.id)
+            )
+        }
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            products = mapped
+            offersState = mapped.isEmpty ? .empty : .loaded
+
+            if let currentSelected = selectedOfferForDetails,
+               let refreshed = mapped.first(where: { $0.id == currentSelected.id }) {
+                selectedOfferForDetails = refreshed
+            }
+        }
+    }
+
     var filteredProducts: [HomeProductOffer] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         return products.filter { item in
@@ -247,20 +184,78 @@ final class ExploreViewModel {
             return matchesSearch && matchesCategory && matchesDiscount
         }
     }
+
     var favoriteProducts: [HomeProductOffer] {
         products.filter { $0.isFavorite }
     }
+
+    // MARK: - Себет (Корзина)
     var totalCartCount: Int {
         cartItems.reduce(0) { $0 + $1.quantity }
     }
+
+    var totalCartPrice: Int {
+        cartItems.reduce(0) { $0 + ($1.offer.priceValue * $1.quantity) }
+    }
+
+    var formattedTotalCartPrice: String {
+        formatPrice(totalCartPrice)
+    }
+
+    func formatPrice(_ value: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = " "
+        let str = formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+        return "\(str) ₸"
+    }
+
     func addToCart(offer: HomeProductOffer, quantity: Int) {
-        if let idx = cartItems.firstIndex(where: { $0.offer.id == offer.id }) {
-            cartItems[idx].quantity += quantity
-        } else {
-            cartItems.append(CartOrderItem(offer: offer, quantity: quantity))
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.82)) {
+            if let idx = cartItems.firstIndex(where: { $0.offer.id == offer.id }) {
+                cartItems[idx].quantity += quantity
+            } else {
+                cartItems.append(CartOrderItem(offer: offer, quantity: quantity))
+            }
         }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         selectedOfferForDetails = nil
     }
+
+    func removeFromCart(id: UUID) {
+        withAnimation(.spring(response: 0.36, dampingFraction: 0.82)) {
+            cartItems.removeAll { $0.id == id }
+        }
+        UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+    }
+
+    func incrementCartItem(id: UUID) {
+        guard let idx = cartItems.firstIndex(where: { $0.id == id }) else { return }
+        guard cartItems[idx].quantity < 20 else { return }
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+            cartItems[idx].quantity += 1
+        }
+    }
+
+    func decrementCartItem(id: UUID) {
+        guard let idx = cartItems.firstIndex(where: { $0.id == id }) else { return }
+        if cartItems[idx].quantity > 1 {
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                cartItems[idx].quantity -= 1
+            }
+        } else {
+            removeFromCart(id: id)
+        }
+    }
+
+    func clearCart() {
+        withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+            cartItems.removeAll()
+        }
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    // MARK: - Фильтрлер мен Баннерлер
     func selectBanner(_ banner: ExplorePromoBanner) {
         withAnimation(.spring(response: 0.38, dampingFraction: 0.84)) {
             isBannerAutoScrollStopped = true
@@ -268,13 +263,14 @@ final class ExploreViewModel {
             selectedCategory = banner.filterCategory
         }
     }
+
     func selectCategory(_ category: String?) {
         withAnimation(.spring(response: 0.38, dampingFraction: 0.84)) {
             if category == nil {
                 selectedCategory = nil
                 selectedBannerID = nil
                 isBannerAutoScrollStopped = false
-                minDiscountPercent = 5
+                minDiscountPercent = 0
             } else if selectedCategory == category {
                 selectedCategory = nil
                 selectedBannerID = nil
@@ -302,7 +298,7 @@ final class ExploreViewModel {
             selectedCategory = nil
             selectedBannerID = nil
             isBannerAutoScrollStopped = false
-            minDiscountPercent = 5
+            minDiscountPercent = 0
             searchText = ""
         }
     }
@@ -314,10 +310,17 @@ final class ExploreViewModel {
         }
     }
 
-    func toggleFavorite(for offerID: UUID) {
+    func toggleFavorite(for offerID: String) {
+        if favoriteOfferIDs.contains(offerID) {
+            favoriteOfferIDs.remove(offerID)
+        } else {
+            favoriteOfferIDs.insert(offerID)
+        }
+        UserDefaults.standard.set(Array(favoriteOfferIDs), forKey: favoritesStorageKey)
+
         guard let index = products.firstIndex(where: { $0.id == offerID }) else { return }
         withAnimation(.spring(response: 0.28, dampingFraction: 0.76)) {
-            products[index].isFavorite.toggle()
+            products[index].isFavorite = favoriteOfferIDs.contains(offerID)
             if selectedOfferForDetails?.id == offerID {
                 selectedOfferForDetails = products[index]
             }

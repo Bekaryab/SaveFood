@@ -11,3 +11,8 @@ xcuserdata/
 *.hmap
 *.ipa
 *.dSYM
+
+# Local secrets
+Secrets.xcconfig
+
+/.plist
